@@ -271,4 +271,4 @@ async def decrypt(ctx: commands.Context, shift: int, *, text: str):
     await ctx.send(f"復号化結果: {decrypted_text}")
   
 # Botを実行
-bot.run("MTMyMDcwNDQwNjc2ODk4MDAxOQ.G4dQad.2oHbwODbBHVjeWI7CKEZl3GkZsk9sJfNqEoGMY")
+bot.run(token)
