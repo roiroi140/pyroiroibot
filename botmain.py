@@ -47,19 +47,20 @@ async def greet():
     await channel.send("こんにちは！ボットが起動しました。")
   
 
-# メンバー参加時のイベント
+# メッセージイベント
 @bot.event
 async def on_member_join(member):
     embed = discord.Embed(
-        title=f"{member.name}さん、参加してくれてありがとう。",
+        title=f"{member.name}さん。参加してくれてありがとう。",
         color=0x00ffff
     )
-    channel = discord.utils.get(member.guild.text_channels, name="ようこそ")
+    # 必要に応じて、メッセージ送信コードを追加
+    channel = discord.utils.get(member.guild.text_channels, name="ようこそ")  # 'ようこそ' を適切なチャンネル名に変更
     if channel:
         await channel.send(embed=embed)
-
+    
     # 特定のIDの場合にキックする処理
-    target_ids = [1234567890]
+    target_ids = [1234567890]  # キック対象のユーザーIDリスト
     if member.id in target_ids:
         try:
             await member.ban(reason="特定のIDのため自動キックされました。")
@@ -71,19 +72,13 @@ async def on_member_join(member):
         except Exception as e:
             if channel:
                 await channel.send(f"{member.name} さんをキック中にエラーが発生しました: {e}")
-#botがサーバに参加した時のイベント
-@bot.event
-async def on_guild_join(guild):
-    # メッセージを送信するためのチャンネルを探す
-    for channel in guild.text_channels:
-        if channel.permissions_for(guild.me).send_messages:
-            await channel.send(f"bot追加ありがとー！よかったらサポートサーバー来てね！質問とか色々できるよ！https://discord.gg/qX4M83SZ9g")
-            break
+
 
 # AES暗号化コマンド
 @bot.command()
 async def aes_encrypt(ctx: commands.Context, *, text: str):
-    iv = urandom(16)
+    """AESを使用してテキストを暗号化するコマンド"""
+    iv = urandom(16)  # 暗号化ごとに新しいIVを生成
     cipher = Cipher(algorithms.AES(aes_key), modes.CBC(iv), backend=default_backend())
     encryptor = cipher.encryptor()
 
@@ -96,6 +91,7 @@ async def aes_encrypt(ctx: commands.Context, *, text: str):
 # AES復号化コマンド
 @bot.command()
 async def aes_decrypt(ctx: commands.Context, *, hex_data: str):
+    """AESを使用して暗号化されたデータを復号化するコマンド"""
     try:
         iv, encrypted_data = hex_data.split(":")
         iv = bytes.fromhex(iv)
@@ -112,6 +108,18 @@ async def aes_decrypt(ctx: commands.Context, *, hex_data: str):
     except Exception as e:
         await ctx.send(f"エラーが発生しました: {e}")
 
+# シーザー暗号関数
+def caesar_cipher(text: str, shift: int) -> str:
+    """シーザー暗号の暗号化または復号化を行う関数"""
+    result = []
+    for char in text:
+        if char.isalpha():
+            base = ord('A') if char.isupper() else ord('a')
+            result.append(chr((ord(char) - base + shift) % 26 + base))
+        else:
+            result.append(char)
+    return ''.join(result)
+
 # オーナーチェック関数
 def is_owner(interaction: discord.Interaction):
     return interaction.user.id == OWNER_ID
@@ -122,19 +130,62 @@ async def hello(interaction: discord.Interaction):
     await interaction.response.send_message(f"Hello {interaction.user.name}")
 
 # ダイスコマンド
+# 100面ダイス
 @bot.tree.command(name='1d100', description='100面ダイス')
 async def d100(interaction: discord.Interaction):
     result = random.randint(1, 100)
-    await interaction.response.send_message(f"🎲 100面ダイス: {result}")
+    await interaction.response.send_message(f"🎲 100面ダイス: {result} 1d100 >> {result}")
+
+# 20面ダイス
+@bot.tree.command(name='1d20', description='20面ダイス')
+async def d20(interaction: discord.Interaction):
+    result = random.randint(1, 20)
+    await interaction.response.send_message(f"🎲 20面ダイス: {result} 1d100 >> {result}")
+
+# 12面ダイス
+@bot.tree.command(name='1d12', description='12面ダイス')
+async def d12(interaction: discord.Interaction):
+    result = random.randint(1, 12)
+    await interaction.response.send_message(f"🎲 12面ダイス: {result} 1d100 >> {result}")
+
+# 10面ダイス
+@bot.tree.command(name='1d10', description='10面ダイス')
+async def d10(interaction: discord.Interaction):
+    result = random.randint(1, 10)
+    await interaction.response.send_message(f"🎲 10面ダイス: {result} 1d100 >> {result}")
+
+# 8面ダイス
+@bot.tree.command(name='1d8', description='8面ダイス')
+async def d8(interaction: discord.Interaction):
+    result = random.randint(1, 8)
+    await interaction.response.send_message(f"🎲 8面ダイス: {result} 1d100 >> {result}")
+
+# 6面ダイス
+@bot.tree.command(name='1d6', description='6面ダイス')
+async def d6(interaction: discord.Interaction):
+    result = random.randint(1, 6)
+    await interaction.response.send_message(f"🎲 6面ダイス: {result} 1d100 >> {result}")
+
+# 4面ダイス
+@bot.tree.command(name='1d4', description='4面ダイス')
+async def d4(interaction: discord.Interaction):
+    result = random.randint(1, 4)
+    await interaction.response.send_message(f"🎲 4面ダイス: {result} 1d100 >> {result}")
+
 
 # 足し算コマンド
 @bot.command()
 async def add(ctx: commands.Context, a: int, b: int):
+    """足し算をするコマンド"""
     await ctx.send(a + b)
 
 # メッセージ履歴取得コマンド
-@bot.command()
+@bot.command(
+    name="message",
+    aliases=["msg", "m"],
+)
 async def get_message(ctx: commands.Context, channel: discord.TextChannel):
+    """チャンネルのメッセージを取得し、テキストファイルに保存するコマンド"""
     with open("messages.txt", "w", encoding="utf-8") as file:
         async for message in channel.history(
             after=datetime.utcnow() - timedelta(hours=1),
@@ -145,5 +196,79 @@ async def get_message(ctx: commands.Context, channel: discord.TextChannel):
 
     await ctx.send(file=discord.File("messages.txt"))
 
+# オーナー限定コマンド
+# ミュートコマンド
+@bot.tree.command(name="mute", description="オーナーのみ使用可能なミュートコマンド")
+async def mute(interaction: discord.Interaction, member: discord.Member):
+    if not is_owner(interaction):
+        await interaction.response.send_message("このコマンドはオーナーのみ使用できます。", ephemeral=True)
+        return
+
+    role = get(interaction.guild.roles, name="チャット制限")
+    if role is None:
+        role = await interaction.guild.create_role(name="チャット制限", mentionable=True)
+
+    await member.add_roles(role)
+    await interaction.response.send_message(f"{member.mention} をチャット制限しました。")
+
+# ミュート解除コマンド
+@bot.tree.command(name="unmute", description="オーナーのみ使用可能なミュート解除コマンド")
+async def unmute(interaction: discord.Interaction, member: discord.Member):
+    if not is_owner(interaction):
+        await interaction.response.send_message("このコマンドはオーナーのみ使用できます。", ephemeral=True)
+        return
+
+    role = get(interaction.guild.roles, name="チャット制限")
+    if role in member.roles:
+        await member.remove_roles(role)
+        await interaction.response.send_message(f"{member.mention} のミュートを解除しました。")
+    else:
+        await interaction.response.send_message(f"{member.mention} はミュートされていません。", ephemeral=True)
+
+@bot.tree.command(name="ban_everywhere", description="特定のIDを全サーバーでBANします")
+async def ban_everywhere(interaction: discord.Interaction, member: discord.Member):
+    if not is_owner(interaction):
+      await interaction.response.send_message("このコマンドはオーナーのみ使用できます。", ephemral=True)
+      return
+      
+    banned_guilds = []  # BANが成功したサーバーのリスト
+    failed_guilds = []  # BANに失敗したサーバーのリスト
+
+    for guild in bot.guilds:  # Botが所属しているすべてのサーバーをループ
+        member = guild.get_member(TARGET_USER_ID)
+        if member:
+            try:
+                await member.ban(reason="特定のIDによる全サーバーBAN")
+                banned_guilds.append(guild.name)
+            except Exception as e:
+                failed_guilds.append((guild.name, str(e)))
+        else:
+            failed_guilds.append((guild.name, "メンバーが見つかりませんでした"))
+
+    # 結果を送信
+    success_message = (
+        f"以下のサーバーでBANが成功しました: {', '.join(banned_guilds)}" if banned_guilds else "BANに成功したサーバーはありません。"
+    )
+    failed_message = (
+        f"\n以下のサーバーでBANが失敗しました:\n" + "\n".join([f"{guild}: {reason}" for guild, reason in failed_guilds])
+        if failed_guilds
+        else "全てのサーバーでBANが成功しました。"
+    )
+
+    await interaction.response.send_message(success_message + "\n" + failed_message, ephemeral=True)
+# オーナー限定コマンド終了
+# シーザー暗号コマンド
+@bot.command()
+async def encrypt(ctx: commands.Context, shift: int, *, text: str):
+    """シーザー暗号でテキストを暗号化するコマンド"""
+    encrypted_text = caesar_cipher(text, shift)
+    await ctx.send(f"暗号化結果: {encrypted_text}")
+
+@bot.command()
+async def decrypt(ctx: commands.Context, shift: int, *, text: str):
+    """シーザー暗号でテキストを復号化するコマンド"""
+    decrypted_text = caesar_cipher(text, -shift)
+    await ctx.send(f"復号化結果: {decrypted_text}")
+  
 # Botを実行
-bot.run()
+bot.run("MTMyMDcwNDQwNjc2ODk4MDAxOQ.G4dQad.2oHbwODbBHVjeWI7CKEZl3GkZsk9sJfNqEoGMY")
