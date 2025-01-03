@@ -130,12 +130,11 @@ async def hello(interaction: discord.Interaction):
     await interaction.response.send_message(f"Hello {interaction.user.name}")
 
 # ダイスコマンド
-# ダイスコマンドを動的に生成
 DICE_SIZES = [100, 20, 12, 10, 8, 6, 4]
-
+# コマンドを動的に生成
 for dice_size in DICE_SIZES:
     @bot.tree.command(name=f"1d{dice_size}", description=f"{dice_size}面ダイスを振る")
-    async def roll_dice(interaction: discord.Interaction, size=dice_size):
+    async def roll_dice(interaction: discord.Interaction, size: int = dice_size):  # 型アノテーションを追加
         result = random.randint(1, size)
         await interaction.response.send_message(f"🎲 {size}面ダイス: {result} 1d{size} >> {result}")
 
