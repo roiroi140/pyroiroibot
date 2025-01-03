@@ -1,7 +1,7 @@
 from discord.ext import commands
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.backends import default_backend
-from os import urandom
+from os import urandom, environ
 from datetime import datetime, timedelta
 from discord.utils import get
 import discord
@@ -269,3 +269,5 @@ async def decrypt(ctx: commands.Context, shift: int, *, text: str):
     """シーザー暗号でテキストを復号化するコマンド"""
     decrypted_text = caesar_cipher(text, -shift)
     await ctx.send(f"復号化結果: {decrypted_text}")
+
+bot.run(environ['token'])
