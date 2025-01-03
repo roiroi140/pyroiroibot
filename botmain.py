@@ -130,13 +130,47 @@ async def hello(interaction: discord.Interaction):
     await interaction.response.send_message(f"Hello {interaction.user.name}")
 
 # ダイスコマンド
-DICE_SIZES = [100, 20, 12, 10, 8, 6, 4]
-# コマンドを動的に生成
-for dice_size in DICE_SIZES:
-    @bot.tree.command(name=f"1d{dice_size}", description=f"{dice_size}面ダイスを振る")
-    async def roll_dice(interaction: discord.Interaction, size: int = dice_size):  # 型アノテーションを追加
-        result = random.randint(1, size)
-        await interaction.response.send_message(f"🎲 {size}面ダイス: {result} 1d{size} >> {result}")
+# 100面ダイス
+@bot.tree.command(name='1d100', description='100面ダイスを振る')
+async def roll_d100(interaction: discord.Interaction):
+    result = random.randint(1, 100)
+    await interaction.response.send_message(f"🎲 100面ダイス: {result} 1d100 >> {result}")
+
+# 20面ダイス
+@bot.tree.command(name='1d20', description='20面ダイスを振る')
+async def roll_d20(interaction: discord.Interaction):
+    result = random.randint(1, 20)
+    await interaction.response.send_message(f"🎲 20面ダイス: {result} 1d20 >> {result}")
+
+# 12面ダイス
+@bot.tree.command(name='1d12', description='12面ダイスを振る')
+async def roll_d12(interaction: discord.Interaction):
+    result = random.randint(1, 12)
+    await interaction.response.send_message(f"🎲 12面ダイス: {result} 1d12 >> {result}")
+
+# 10面ダイス
+@bot.tree.command(name='1d10', description='10面ダイスを振る')
+async def roll_d10(interaction: discord.Interaction):
+    result = random.randint(1, 10)
+    await interaction.response.send_message(f"🎲 10面ダイス: {result} 1d10 >> {result}")
+
+# 8面ダイス
+@bot.tree.command(name='1d8', description='8面ダイスを振る')
+async def roll_d8(interaction: discord.Interaction):
+    result = random.randint(1, 8)
+    await interaction.response.send_message(f"🎲 8面ダイス: {result} 1d8 >> {result}")
+
+# 6面ダイス
+@bot.tree.command(name='1d6', description='6面ダイスを振る')
+async def roll_d6(interaction: discord.Interaction):
+    result = random.randint(1, 6)
+    await interaction.response.send_message(f"🎲 6面ダイス: {result} 1d6 >> {result}")
+
+# 4面ダイス
+@bot.tree.command(name='1d4', description='4面ダイスを振る')
+async def roll_d4(interaction: discord.Interaction):
+    result = random.randint(1, 4)
+    await interaction.response.send_message(f"🎲 4面ダイス: {result} 1d4 >> {result}")
 
 
 
