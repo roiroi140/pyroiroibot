@@ -269,5 +269,5 @@ async def decrypt(ctx: commands.Context, shift: int, *, text: str):
     """シーザー暗号でテキストを復号化するコマンド"""
     decrypted_text = caesar_cipher(text, -shift)
     await ctx.send(f"復号化結果: {decrypted_text}")
-
+# Botを実行
 bot.run(environ['token'])
